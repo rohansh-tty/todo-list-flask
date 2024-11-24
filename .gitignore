@@ -1,0 +1,15 @@
+# Virtual Environment
+env/
+.env
+*.pyc
+__pycache__/
+
+# Database
+*.db
+
+# IDE Files
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
