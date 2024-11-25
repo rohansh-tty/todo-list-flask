@@ -5,6 +5,7 @@ from app.extensions import db,col
 from flask.views import MethodView
 import json
 from datetime import datetime
+import time 
 
 class TodoListResource(MethodView):
     def get(self):
@@ -20,8 +21,8 @@ class TodoListResource(MethodView):
                 response_body = TodoSchema().dump(todo) 
         except Exception as e:
             return TodoResponseSchema().dump({"status": "error", "error": repr(e)})
-        return Response(json.dumps(response_body), mimetype="application/json", status=200)
-
+        response_ = {"status": "success", "data": response_body}
+        return TodoResponseSchema().dump(response_)
 
     def post(self):
         """Create a new todo"""
