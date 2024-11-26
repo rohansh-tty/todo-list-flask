@@ -1,12 +1,15 @@
 import pytest
 from app import create_app, init_db
 
+
 @pytest.fixture()
 def app():
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-    })
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
 
     # other setup can go here
     with app.app_context():
