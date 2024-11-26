@@ -13,3 +13,6 @@ __pycache__/
 
 # Misc
 .DS_Store
+
+# Log 
+logs/

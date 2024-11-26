@@ -1,16 +1,17 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify
 from flask_restful import Api
 from app.extensions import db, ma
 from app.resources import TodoListResource
-from app.config import Config
+from app.config import Config, LOGGING_CONFIG
 from celery import Celery
 import time
 import json
 import redis
 import threading
-from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_sock import Sock
+from logging.config import dictConfig
 
+dictConfig(LOGGING_CONFIG)
 
 # redis config
 pub = redis.Redis(host="localhost", port=6379)
@@ -65,6 +66,7 @@ def proxytask():
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.logger.info('Creating application in 3..2..1')
 
     # Initialize extensions
     ma.init_app(app)

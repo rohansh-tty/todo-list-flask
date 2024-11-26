@@ -1,21 +1,23 @@
-from flask import Blueprint, request, jsonify, Response, make_response
-from flask_restful import Resource, abort
+from flask import  request
 from app.db.schema import (
     TodoSchema,
     TodoResponseSchema,
-    TodoUpdateSchema,
     TodoGetResponseSchema,
 )
-from app.extensions import db, col
+from app.extensions import col
 from flask.views import MethodView
-import json
-from datetime import datetime, timezone
-import time
+from datetime import datetime
+import logging
+from app.config import LOGGING_CONFIG
+from logging.config import dictConfig
 
+dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger()
 
 class TodoListResource(MethodView):
     def get(self):
         """Retrieve all todos"""
+        logger.info('log from root logloggerger')
         args = request.args.to_dict()
         response_body = []
         try:
