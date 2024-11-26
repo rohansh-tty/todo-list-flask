@@ -1,35 +1,36 @@
 from flask import Blueprint, request, jsonify, Response, make_response
 from flask_restful import Resource, abort
-from app.db.schema import TodoSchema, TodoResponseSchema, TodoUpdateSchema
+from app.db.schema import TodoSchema, TodoResponseSchema, TodoUpdateSchema, TodoGetResponseSchema
 from app.extensions import db,col
 from flask.views import MethodView
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import time 
 
 class TodoListResource(MethodView):
     def get(self):
         """Retrieve all todos"""
         args = request.args.to_dict()
-        response_body = None
+        response_body = []
         try:
             if 'todo_name' not in args.keys():
                 todos= col.find({})
                 response_body = TodoSchema().dump(todos, many=True)
             else:
                 todo = col.find_one({'name': args['todo_name']})
-                response_body = TodoSchema().dump(todo) 
+                if todo is not None:
+                    response_body = [TodoSchema().dump(todo) ] # for consistent response schema
         except Exception as e:
-            return TodoResponseSchema().dump({"status": "error", "error": repr(e)})
+            return TodoGetResponseSchema().dump({"status": "error", "error": repr(e)})
         response_ = {"status": "success", "data": response_body}
-        return TodoResponseSchema().dump(response_)
+        return TodoGetResponseSchema().dump(response_)
 
     def post(self):
         """Create a new todo"""
         payload = request.get_json()
         try:
-            payload['created_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S+03:00')
-            payload['updated_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S+03:00')
+            payload['created_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            payload['updated_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
             data = TodoSchema().load(payload)
             new_document = col.insert_one(data)
             response_data = {'id': str(new_document.inserted_id), 'name': payload['name'], 'status': payload['status']}

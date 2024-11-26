@@ -56,8 +56,8 @@ TODO-LIST-FLASK/
 ├── requirements.txt
 ├── .gitignore
 ├── app/
-│   |── config.py
-│   |── __init__.py
+    |── config.py
+    |── __init__.py
     ├── db/
         ├── _init_.py
         ├── connection.py
@@ -68,7 +68,7 @@ TODO-LIST-FLASK/
     └── resources/
         ├── _init_.py
         ├── todo.py
-    └── test
+    └── tests
         ├── _init_.py
         ├── conftest.py
         └── test_app.py
