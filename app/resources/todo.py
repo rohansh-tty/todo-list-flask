@@ -4,28 +4,26 @@ from app.db.schema import (
     TodoResponseSchema,
     TodoGetResponseSchema,
 )
-from app.extensions import col
+from app.services import collection, log_config
 from flask.views import MethodView
 from datetime import datetime
 import logging
-from app.config import LOGGING_CONFIG
 from logging.config import dictConfig
 
-dictConfig(LOGGING_CONFIG)
+dictConfig(log_config)
 logger = logging.getLogger()
 
 class TodoListResource(MethodView):
     def get(self):
         """Retrieve all todos"""
-        logger.info('log from root logloggerger')
         args = request.args.to_dict()
         response_body = []
         try:
             if "todo_name" not in args.keys():
-                todos = col.find({})
+                todos = collection.find({})
                 response_body = TodoSchema().dump(todos, many=True)
             else:
-                todo = col.find_one({"name": args["todo_name"]})
+                todo = collection.find_one({"name": args["todo_name"]})
                 if todo is not None:
                     response_body = [
                         TodoSchema().dump(todo)
@@ -42,7 +40,7 @@ class TodoListResource(MethodView):
             payload["created_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
             payload["updated_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
             data = TodoSchema().load(payload)
-            new_document = col.insert_one(data)
+            new_document = collection.insert_one(data)
             response_data = {
                 "id": str(new_document.inserted_id),
                 "name": payload["name"],
@@ -58,7 +56,7 @@ class TodoListResource(MethodView):
             payload = request.get_json()
             query_filter = payload["filter"]
             update_operation = {"$set": payload["data"]}
-            result = col.update_one(query_filter, update_operation)
+            result = collection.update_one(query_filter, update_operation)
         except Exception as e:
             return TodoResponseSchema().dump({"status": "error", "error": repr(e)})
         response_ = {"status": "success", "data": payload["data"]}
@@ -68,7 +66,7 @@ class TodoListResource(MethodView):
         try:
             payload = request.get_json()
             query_filter = payload["filter"]
-            result = col.delete_one(query_filter)
+            result = collection.delete_one(query_filter)
         except Exception as e:
             return TodoResponseSchema().dump({"status": "error", "error": repr(e)})
         response_ = {"status": "success", "data": {}}

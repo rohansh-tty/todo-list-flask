@@ -1,5 +1,3 @@
-from datetime import datetime
-from bson import ObjectId
 
 class Todo:
     def __init__(self, id, name, status, created_at, updated_at):

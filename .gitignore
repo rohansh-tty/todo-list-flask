@@ -1,6 +1,7 @@
 # Virtual Environment
 env/
 .env
+flask_env/
 *.pyc
 __pycache__/
 

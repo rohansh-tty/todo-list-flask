@@ -1,5 +1,4 @@
-from app.extensions import db, ma
-from sqlalchemy.sql import func
+from app.services import ma
 
 
 class TodoSchema(ma.Schema):

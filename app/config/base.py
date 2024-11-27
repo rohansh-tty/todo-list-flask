@@ -1,12 +1,7 @@
 import os
+from flask import Flask
 
-
-class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY") or "your-secret-key"
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or "sqlite:///todos.db"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-LOGGING_CONFIG = {
+BASE_LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
@@ -28,9 +23,9 @@ LOGGING_CONFIG = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "detailed",
-            "filename": "logs/app.log",
+            "filename": "logs/app2.log",
             "mode": "a"
         }
     },
@@ -51,8 +46,47 @@ LOGGING_CONFIG = {
             "propagate": False
         },
         "root": {
-            "level": "DEBUG",
+            "level": "INFO",
             "handlers": ["console", "file"]
         }
     }
 }
+
+
+class Config:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key')
+    LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
+    LOGGING_CONFIG = BASE_LOGGING_CONFIG
+    DB_NAME = os.getenv('DB_NAME', 'todo-list-dev')
+
+    # Marshmallow configuration
+    MARSHMALLOW_STRICT = True
+    MARSHMALLOW_INCLUDE_NULLS = False
+
+    
+    @classmethod
+    def init_app(cls, app: Flask) -> None:
+        """Initialize development-specific configurations."""
+        app.logger.setLevel(cls.LOGGING_LEVEL, 'DEBUG')
+
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    TESTING = False
+    LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+
+    # MongoDB Development Connection
+    MONGO_URI = os.getenv('DEV_DB_URI', 'mongodb://localhost:27017/dev_database')
+    
+   
+    
+class ProductionConfig(Config):
+    DEBUG = False
+    TESTING = False
+    LOG_LEVEL = 'INFO'
+    LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+
+    # MongoDB Production Connection
+    MONGO_URI = os.getenv('PROD_MONGO_URI', 'mongodb://localhost:27017/dev_database')
+    
+   

@@ -12,8 +12,8 @@ def app():
     )
 
     # other setup can go here
-    with app.app_context():
-        init_db(app)
+    # with app.app_context():
+    #     init_db(app)
 
     yield app
 
