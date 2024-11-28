@@ -61,9 +61,9 @@ def init_db(app):
 
 @celery_obj.task
 def proxytask():
-    time.sleep(5)
+    time.sleep(10)
     print("running proxy task...")
-    time.sleep(5)
+    time.sleep(10)
 
 
 def create_app(config_class=Config):
@@ -107,9 +107,10 @@ def create_app(config_class=Config):
     # socketio = SocketIO(app, cors_allowed_origins="*")
     @sock.route("/echo")
     def echo(ws):
+        import random
         while True:
             data = ws.receive()
-            ws.send({"message": "this works..."})
+            ws.send({"message": f"this works...{random.randint(1,20000)}"})
 
     @app.route("/task", methods=["POST"])
     def send_mail_to_client():

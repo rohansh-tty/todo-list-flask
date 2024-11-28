@@ -22,25 +22,38 @@ source venv/bin/activate
 ```
 pip install -r requirements.txt
 ```
+5. Create .env file and these keys 
+```
+SECRET_KEY=your-secret-key-here
 
+# Mongo Configuration
+DB_USER=
+DB_PASSWORD=
+DB_NAME= 
+DB_COLLECTION=
+DEV_DB_URI=
+PROD_DB_URI=
+
+# Flask Configuration
+FLASK_APP=wsgi.py
+FLASK_ENV=development
+CONFIG=dev
+```
 ## Running the App
-1. Set the Flask app environment variable:
+
+1. Run the development server:
 ```
-export FLASK_APP=app
+flask --debug run
 ```
-2. Run the development server:
-```
-flask run
-```
-3. Run Celery Worker:
+2. Run Celery Worker:
 ```
 celery -A app.celery_obj worker --loglevel=INFO -E
 ```
-4. Start Redis Docker Container
+3. Start Redis Docker Container
 ```
 docker run -d -p 6379:6379
 ```
-5. Open your web browser and visit `http://localhost:5000` to access the TODO list app.
+4. Open your web browser and visit `http://localhost:5000` to access the TODO list app.
 
 ## Testing
 To run the test suite:
